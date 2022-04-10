@@ -27,7 +27,7 @@ public class RoleDAOImpl implements RoleDAO {
         Session currentSession = entityManager.unwrap(Session.class);
 
         Query<Role> query =
-                currentSession.createQuery("from roles where name=:name",
+                currentSession.createQuery("from Role where name=:name",
                         Role.class);
         query.setParameter("name", name);
         Role role = query.uniqueResult();

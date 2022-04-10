@@ -1,7 +1,5 @@
 package nl.hsleiden.webshop.config;
 
-import nl.hsleiden.webshop.utility.AuthTokenFilter;
-import nl.hsleiden.webshop.utility.AuthenticationEntryPointJwt;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,10 +11,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import nl.hsleiden.webshop.service.implementations.UserDetailsServiceImpl;
+import nl.hsleiden.webshop.utility.AuthTokenFilter;
+import nl.hsleiden.webshop.utility.AuthEntryPointJwt;
 
 @Configuration
 @EnableWebSecurity
@@ -24,10 +26,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    private AuthenticationEntryPointJwt unAuthorizedHandler;
+    private AuthEntryPointJwt unAuthorizedHandler;
 
     @Autowired
     private AuthTokenFilter authTokenFilter;
@@ -54,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unAuthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/test/**").permitAll()
+                .antMatchers("/api/shop/**").permitAll()
                 .anyRequest().authenticated();
         httpSecurity.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }

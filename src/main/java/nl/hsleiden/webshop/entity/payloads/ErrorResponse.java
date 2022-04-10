@@ -1,4 +1,4 @@
-package nl.hsleiden.webshop.entity;
+package nl.hsleiden.webshop.entity.payloads;
 
 public class ErrorResponse {
 

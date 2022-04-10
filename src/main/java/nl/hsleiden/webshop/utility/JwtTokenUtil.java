@@ -1,28 +1,26 @@
 package nl.hsleiden.webshop.utility;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
+import io.jsonwebtoken.*;
+import nl.hsleiden.webshop.entity.UserDetailsImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
 @Component
-public class JwtTokenUtil implements Serializable {
+public class JwtTokenUtil {
 
-    private static final long serialVersionUID = -2550185165626007488L;
-
-    public static final long JWT_TOKEN_VALID = 5 * 60 * 60;
+    @Value("${jwt.expiration.ms}")
+    private int jwtExperationMilliseconds;
 
     @Value("${jwt.secret}")
     private String secret;
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenUtil.class);
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -40,25 +38,40 @@ public class JwtTokenUtil implements Serializable {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
-    private Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
-    }
-
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetailsImpl userDetails, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("email", userDetails.getEmail());
+        claims.put("roles", roles);
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
     private String doGenerateToken(Map<String, Object> claims, String subject) {
 
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALID * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExperationMilliseconds))
+                .signWith(SignatureAlgorithm.HS512, secret)
+                .compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public Boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            return true;
+        } catch (SignatureException signatureException) {
+            logger.error("Invalid JWT signature: ", signatureException.getMessage());
+        } catch (MalformedJwtException malformedJwtException) {
+            logger.error("Invalid JWT token: ", malformedJwtException.getMessage());
+        } catch (ExpiredJwtException expiredJwtException) {
+            logger.error("JWT token is expired: ", expiredJwtException.getMessage());
+        } catch (UnsupportedJwtException unsupportedJwtException) {
+            logger.error("JWT token is unsupported: ", unsupportedJwtException.getMessage());
+        } catch (IllegalArgumentException illegalArgumentException) {
+            logger.error("JWT claims string is empty: ", illegalArgumentException.getMessage());
+        }
+
+        return false;
     }
 }

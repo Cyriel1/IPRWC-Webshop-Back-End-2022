@@ -1,12 +1,10 @@
-package nl.hsleiden.webshop.service.implementations;
+package nl.hsleiden.webshop.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import nl.hsleiden.webshop.entity.User;
 
 import java.util.Collection;
 import java.util.List;

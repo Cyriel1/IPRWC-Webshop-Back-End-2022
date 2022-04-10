@@ -22,36 +22,36 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
+    public void saveUser(User user) {
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        currentSession.saveOrUpdate(user);
+    }
+
+    @Override
+    public User findByUsername(String username) {
         Session currentSession = entityManager.unwrap(Session.class);
 
         Query<User> query =
-                currentSession.createQuery("from users where username=:username",
+                currentSession.createQuery("from User where username=:username",
                         User.class);
         query.setParameter("username", username);
         User user = query.uniqueResult();
 
-        return Optional.of(user);
+        return user;
     }
 
     @Override
-    public Boolean existsByUsername(String username) {
-        Optional<User> user = findByUsername(username);
-
-        return user.isPresent();
-    }
-
-    @Override
-    public Boolean existsByEmail(String email) {
+    public User findByEmail(String email) {
         Session currentSession = entityManager.unwrap(Session.class);
 
         Query<User> query =
-                currentSession.createQuery("from users where email=:email",
+                currentSession.createQuery("from User where email=:email",
                         User.class);
         query.setParameter("email", email);
         User user = query.uniqueResult();
 
-        return user != null;
+        return user;
     }
 
 }
