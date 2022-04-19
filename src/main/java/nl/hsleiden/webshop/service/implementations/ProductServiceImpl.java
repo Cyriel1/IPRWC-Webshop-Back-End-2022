@@ -106,7 +106,7 @@ public class ProductServiceImpl implements ProductService {
             Path targetLocation = fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            return fileStorageProperties.getUploadDirectory() + fileName;
+            return fileStorageProperties.getUploadDirectory() + '/' + fileName;
         } catch (IOException ex) {
             throw new Exception("Could not store file " + fileName + ". Please try again!", ex);
         }

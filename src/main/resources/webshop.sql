@@ -1,6 +1,6 @@
 USE db;
 
-DROP TABLE IF EXISTS `cart_items`;
+DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `user_profiles`;
 DROP TABLE IF EXISTS `user_roles`;
 DROP TABLE IF EXISTS `products`;
@@ -48,18 +48,18 @@ CREATE TABLE `products` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(50) NOT NULL,
 	`price` FLOAT NOT NULL,
-	`description` VARCHAR(255),
+	`description` VARCHAR(750),
 	`status` SET("in stock", "out of order") NOT NULL,
 	`image_path` VARCHAR(255),
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE `cart_items` (
+CREATE TABLE `orders` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`user_id` BIGINT NOT NULL,
 	`product_id` INT NOT NULL,
     `quantity` INT NOT NULL,
-	`timestamp`TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`timestamp`TIMESTAMP NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
