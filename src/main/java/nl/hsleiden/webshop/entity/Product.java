@@ -1,6 +1,10 @@
 package nl.hsleiden.webshop.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "products")
@@ -12,19 +16,28 @@ public class Product {
     private int id;
 
     @Column(name="name")
+    @NotBlank
+    @Size(max = 50)
     private String name;
 
     @Column(name="price")
     private float price;
 
     @Column(name="description")
+    @Size(max = 750)
     private String description;
 
     @Column(name="status")
+    @NotBlank
     private String status;
 
     @Column(name="image_path")
+    @Size(max = 255)
+    @JsonIgnore
     private String imagePath;
+
+    @Transient
+    private String image;
 
     public Product (){
 
@@ -78,4 +91,23 @@ public class Product {
         this.imagePath = imagePath;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                ", status='" + status + '\'' +
+                ", imagePath='" + imagePath + '\'' +
+                '}';
+    }
 }

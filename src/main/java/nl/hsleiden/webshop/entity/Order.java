@@ -1,15 +1,15 @@
 package nl.hsleiden.webshop.entity;
 
-import org.hibernate.annotations.UpdateTimestamp;
+import java.time.ZonedDateTime;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.Date;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@Table(name = "cart_items")
-public class CartItem {
+@Table(name = "orders")
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,7 @@ public class CartItem {
     private Product product;
 
     @Column(name = "quantity")
+    @NotNull
     private int quantity;
 
     @Column(name = "timestamp", columnDefinition="TIMESTAMP")
@@ -80,11 +81,12 @@ public class CartItem {
 
     @Override
     public String toString() {
-        return "CartItem{" +
+        return "Order{" +
                 "id=" + id +
                 ", user=" + user +
                 ", product=" + product +
                 ", quantity=" + quantity +
+                ", timestamp=" + timestamp +
                 '}';
     }
 }

@@ -1,14 +1,12 @@
 package nl.hsleiden.webshop.service.implementations;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import nl.hsleiden.webshop.dao.interfaces.UserDAO;
 import nl.hsleiden.webshop.entity.User;
+import nl.hsleiden.webshop.dao.interfaces.UserDAO;
 import nl.hsleiden.webshop.service.interfaces.UserService;
-
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -32,6 +30,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User findByEmail(String email) {
         return userDAO.findByEmail(email);
+    }
+
+    @Override
+    @Transactional
+    public User findById(long userId) {
+        return userDAO.findById(userId);
     }
 
     @Override

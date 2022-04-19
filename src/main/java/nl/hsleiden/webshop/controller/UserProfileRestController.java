@@ -1,11 +1,18 @@
 package nl.hsleiden.webshop.controller;
 
-import nl.hsleiden.webshop.entity.UserProfile;
-import nl.hsleiden.webshop.service.interfaces.UserProfileService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
-import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import nl.hsleiden.webshop.entity.User;
+import nl.hsleiden.webshop.entity.UserProfile;
+import nl.hsleiden.webshop.service.interfaces.UserService;
+import nl.hsleiden.webshop.entity.payloads.MessageResponse;
+import nl.hsleiden.webshop.entity.payloads.UserProfileRequest;
+import nl.hsleiden.webshop.service.interfaces.UserProfileService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -15,41 +22,51 @@ public class UserProfileRestController {
     @Autowired
     private UserProfileService userProfileService;
 
-    @GetMapping("/user-profiles")
-    public List<UserProfile> getUserProfiles() {
+    @Autowired
+    private UserService userService;
 
-        return userProfileService.getUserProfiles();
-    }
+    @GetMapping("/user-profile/{userId}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public UserProfile getUserProfile(@PathVariable long userId) {
+        UserProfile userProfile = userProfileService.getUserProfile(userId);
 
-    @GetMapping("/user-profile/{userProfileId}")
-    public UserProfile getUserProfile(@PathVariable int userProfileId) throws Exception {
-        UserProfile userProfile = userProfileService.getUserProfile(userProfileId);
-        if (userProfile == null) throw new Exception("User profile id not found - " + userProfileId);
+        if (userProfile == null) {
+            return new UserProfile();
+        }
 
         return userProfile;
     }
 
     @PostMapping("/user-profile")
-    public UserProfile addUserProfile(@RequestBody UserProfile userProfile) {
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<?> addUserProfile(@Valid @RequestBody UserProfileRequest userProfileRequest) throws Exception {
+        User user = userService.findById(userProfileRequest.getUserId());
+
+        if (user == null) {
+            throw new Exception("user id not found - " + userProfileRequest.getUserId());
+        }
+
+        UserProfile userProfile = userProfileRequest.getUserProfile();
+        userProfile.setUser(user);
         userProfile.setId(0);
         userProfileService.saveUserProfile(userProfile);
 
-        return userProfile;
+        return ResponseEntity.ok(new MessageResponse("User profile succesfully added!"));
     }
 
     @PutMapping("/user-profile")
-    public UserProfile updateUserProfile(@RequestBody UserProfile userProfile) {
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<?> updateUserProfile(@Valid @RequestBody UserProfileRequest userProfileRequest) throws Exception {
+        User user = userService.findById(userProfileRequest.getUserId());
+
+        if (user == null) {
+            throw new Exception("user id not found - " + userProfileRequest.getUserId());
+        }
+
+        UserProfile userProfile = userProfileRequest.getUserProfile();
+        userProfile.setUser(user);
         userProfileService.saveUserProfile(userProfile);
 
-        return userProfile;
-    }
-
-    @DeleteMapping("/user-profile/{userProfileId}")
-    public String deleteUserProfile(@PathVariable int userProfileId) throws Exception {
-        UserProfile userProfile = userProfileService.getUserProfile(userProfileId);
-        if (userProfile == null) throw new Exception("userProfile id not found - " + userProfileId);
-        userProfileService.deleteUserProfile(userProfileId);
-
-        return "Deleted user profile id - " + userProfileId;
+        return ResponseEntity.ok(new MessageResponse("User profile succesfully updated!"));
     }
 }

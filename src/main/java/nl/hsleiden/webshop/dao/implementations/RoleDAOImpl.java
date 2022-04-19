@@ -1,16 +1,18 @@
 package nl.hsleiden.webshop.dao.implementations;
 
-import nl.hsleiden.webshop.dao.interfaces.RoleDAO;
-import nl.hsleiden.webshop.entity.Role;
-import nl.hsleiden.webshop.entity.enums.ERole;
+import java.util.Optional;
+
+import javax.persistence.EntityManager;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import java.util.Optional;
+import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import nl.hsleiden.webshop.entity.Role;
+import nl.hsleiden.webshop.entity.enums.ERole;
+import nl.hsleiden.webshop.dao.interfaces.RoleDAO;
 
 @Repository
 public class RoleDAOImpl implements RoleDAO {

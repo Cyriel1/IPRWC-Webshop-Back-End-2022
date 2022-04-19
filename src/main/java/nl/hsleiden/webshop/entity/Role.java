@@ -1,8 +1,8 @@
 package nl.hsleiden.webshop.entity;
 
-import nl.hsleiden.webshop.entity.enums.ERole;
-
 import javax.persistence.*;
+
+import nl.hsleiden.webshop.entity.enums.ERole;
 
 @Entity
 @Table(name = "roles")

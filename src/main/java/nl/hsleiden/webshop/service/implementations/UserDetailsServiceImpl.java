@@ -1,27 +1,26 @@
 package nl.hsleiden.webshop.service.implementations;
 
-import nl.hsleiden.webshop.entity.UserDetailsImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-
-import nl.hsleiden.webshop.dao.interfaces.UserDAO;
-import nl.hsleiden.webshop.entity.User;
-import nl.hsleiden.webshop.entity.payloads.LoginRequest;
-import nl.hsleiden.webshop.entity.payloads.TokenResponse;
-import nl.hsleiden.webshop.utility.JwtTokenUtil;
-
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
+import nl.hsleiden.webshop.entity.User;
+import nl.hsleiden.webshop.utility.JwtTokenUtil;
+import nl.hsleiden.webshop.entity.UserDetailsImpl;
+import nl.hsleiden.webshop.dao.interfaces.UserDAO;
+import nl.hsleiden.webshop.entity.payloads.LoginRequest;
+import nl.hsleiden.webshop.entity.payloads.TokenResponse;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

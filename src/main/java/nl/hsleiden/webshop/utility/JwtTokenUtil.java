@@ -3,13 +3,15 @@ package nl.hsleiden.webshop.utility;
 import java.util.*;
 import java.util.function.Function;
 
-import io.jsonwebtoken.*;
-import nl.hsleiden.webshop.entity.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
+
+import io.jsonwebtoken.*;
+
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+
+import nl.hsleiden.webshop.entity.UserDetailsImpl;
 
 @Component
 public class JwtTokenUtil {
@@ -34,12 +36,14 @@ public class JwtTokenUtil {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
     public String generateToken(UserDetailsImpl userDetails, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("id", userDetails.getId());
         claims.put("email", userDetails.getEmail());
         claims.put("roles", roles);
         return doGenerateToken(claims, userDetails.getUsername());

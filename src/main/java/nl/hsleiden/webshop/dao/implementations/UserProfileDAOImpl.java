@@ -1,15 +1,15 @@
 package nl.hsleiden.webshop.dao.implementations;
 
+import javax.persistence.EntityManager;
+
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import nl.hsleiden.webshop.dao.interfaces.UserProfileDAO;
 import nl.hsleiden.webshop.entity.UserProfile;
-
-import javax.persistence.EntityManager;
-import java.util.List;
+import nl.hsleiden.webshop.dao.interfaces.UserProfileDAO;
 
 @Repository
 public class UserProfileDAOImpl implements UserProfileDAO {
@@ -22,19 +22,6 @@ public class UserProfileDAOImpl implements UserProfileDAO {
     }
 
     @Override
-    public List<UserProfile> getUserProfiles() {
-        Session currentSession = entityManager.unwrap(Session.class);
-
-        Query<UserProfile> query =
-                currentSession.createQuery("from UserProfile order by lastName",
-                        UserProfile.class);
-
-        List<UserProfile> userProfiles = query.getResultList();
-
-        return userProfiles;
-    }
-
-    @Override
     public void saveUserProfile(UserProfile userProfile) {
         Session currentSession = entityManager.unwrap(Session.class);
 
@@ -42,22 +29,16 @@ public class UserProfileDAOImpl implements UserProfileDAO {
     }
 
     @Override
-    public UserProfile getUserProfile(int id) {
+    public UserProfile getUserProfile(long userId) {
         Session currentSession = entityManager.unwrap(Session.class);
 
-        UserProfile userProfile = currentSession.get(UserProfile.class, id);
+        Query<UserProfile> query =
+                currentSession.createQuery("from UserProfile where user.id=:userId",
+                        UserProfile.class);
+        query.setParameter("userId", userId);
+
+        UserProfile userProfile = query.uniqueResult();
 
         return userProfile;
-    }
-
-    @Override
-    public void deleteUserProfile(int id) {
-        Session currentSession = entityManager.unwrap(Session.class);
-
-        Query theQuery =
-                currentSession.createQuery("delete from UserProfile where id=:userProfileId");
-        theQuery.setParameter("userProfileId", id);
-
-        theQuery.executeUpdate();
     }
 }

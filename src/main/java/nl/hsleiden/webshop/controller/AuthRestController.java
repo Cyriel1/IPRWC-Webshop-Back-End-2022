@@ -1,22 +1,22 @@
 package nl.hsleiden.webshop.controller;
 
-import nl.hsleiden.webshop.entity.payloads.MessageResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Set;
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import nl.hsleiden.webshop.entity.Role;
 import nl.hsleiden.webshop.entity.User;
 import nl.hsleiden.webshop.entity.payloads.LoginRequest;
-import nl.hsleiden.webshop.entity.payloads.RegisterRequest;
 import nl.hsleiden.webshop.entity.payloads.TokenResponse;
-import nl.hsleiden.webshop.service.implementations.UserDetailsServiceImpl;
 import nl.hsleiden.webshop.service.interfaces.RoleService;
 import nl.hsleiden.webshop.service.interfaces.UserService;
-
-import javax.validation.Valid;
-import java.util.Set;
+import nl.hsleiden.webshop.entity.payloads.RegisterRequest;
+import nl.hsleiden.webshop.entity.payloads.MessageResponse;
+import nl.hsleiden.webshop.service.implementations.UserDetailsServiceImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -36,10 +36,10 @@ public class AuthRestController {
     private PasswordEncoder encoder;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public TokenResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         TokenResponse tokenResponse = userDetailsServiceImpl.getTokenResponse(loginRequest);
 
-        return ResponseEntity.ok(tokenResponse);
+        return tokenResponse;
     }
 
     @PostMapping("/register")
